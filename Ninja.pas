@@ -1,4 +1,4 @@
-﻿uses graphABC;
+﻿uses graphABC, System.Windows.Forms;
 
 type
   point = record
@@ -21,7 +21,7 @@ var
   fruits: array [1..NUMBER_OF_FRUITS] of point;
   game, active, how, gameover: boolean;
   database: text;
-
+  f: Form;
 //Клавиша нажата
 procedure KeyDown(Key: integer);
 begin
@@ -47,6 +47,55 @@ begin
   if Key = vk_Right then Right := 0;
 end;
 
+procedure closeForm(sender: object; e: system.eventargs);
+begin
+  f.Close();
+end;
+
+procedure openForm();
+begin
+  var closeButton: button;
+  var labelName, labelInfo, labelYear: System.Windows.Forms.Label;
+  f := new Form;
+  f.BackColor := System.Drawing.Color.AliceBlue;
+  f.Height := 300;
+  f.Width := 300;
+  f.Text := 'Author';
+  
+  closeButton := new Button;
+  closeButton.Height := 30;
+  closeButton.Width :=  100;
+  closeButton.Text := 'Thank You';
+  closeButton.Left := 100;
+  closeButton.Top := 220;
+  closeButton.Click += closeForm;
+  
+  labelName := new System.Windows.Forms.Label();
+  labelName.Text := 'Маджумдер мартин.';
+  labelName.Left := 10;
+  labelName.Top := 10;
+  labelName.Width := 200;
+  
+  labelInfo := new System.Windows.Forms.Label();
+  labelInfo.Text := 'ИФТИС, ИСИТ, 1 курс';
+  labelInfo.Left := 10;
+  labelInfo.Top := 40;
+  labelInfo.Width := 200;
+  
+  
+  labelYear := new System.Windows.Forms.Label();
+  labelYear.Text := '2018 год';
+  labelYear.Left := 10;
+  labelYear.Top := 70;
+  labelYear.Width := 200;
+  
+  f.Controls.Add(closeButton);
+  f.Controls.Add(labelName);
+  f.Controls.Add(labelYear);
+  f.Controls.Add(labelInfo);
+  f.ShowDialog();
+end;
+
 procedure MouseUp(x, y, mb: integer);
 begin
   //Проверяем была ли нажата кнопка start левой кнопкой мыши
@@ -60,6 +109,7 @@ begin
   //Проверяем была ли нажата кнопка exit левой кнопкой мыши
   if (mb = 1) and (x > 360) and (x < 600) and (y > 247) and (y < 297) then active := false;
   //Проверяем была ли нажата кнопка restart левой кнопкой мыши
+  if(mb=1)and(x>360)and(x<600)and(y>304)and(y<354)then  openForm();
   if (mb = 1) and (x > 380) and (x < 580) and (y > 233) and (y < 283) and (gameover = true) then 
   begin
     game := true; //начинаем игру
@@ -109,6 +159,9 @@ begin
   
   Rectangle(360, 247, 600, 297);
   TextOut(460, 254, 'Exit');
+
+  Rectangle(360, 304, 600, 354);
+  TextOut(450, 315, 'About');
   
   Rectangle(340, 400, 620, 600);
   SetFontColor(clYellow);
@@ -248,7 +301,7 @@ begin
       
       for i := 1 to NUMBER_OF_FRUITS do 
       begin
-      //если фрукт попал в область ведерка 
+        //если фрукт попал в область ведерка 
         if(fruits[i].x > x) and (fruits[i].x + 50 < x + 100) and ((fruits[i].y + 10 < y) and (fruits[i].y + 40 > y)) then 
         begin
           fruits[i].y := 0;//, то перемещаем в начало экрана
